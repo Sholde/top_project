@@ -37,3 +37,22 @@ extern const int opposite_of[DIRECTIONS];
 extern const double equil_weight[DIRECTIONS];
 extern const Vector direction_matrix[DIRECTIONS];
    #+END_SRC
+
+** Program doesn't give back and abort sometimes
+
+   When we execute the code now, with the command ~mpirun -np 512
+   --oversubscribe ./lbm~, thr program doesn't give back.
+
+   I decide to run *gdb* and try to identify where we block. And *gdb* say me
+   that I have a *segfault* in the function
+   *setup_init_state_global_poiseuille_profile* in file *lbm_init.c* at line 85.
+
+   This line contain the result of a call fonction. But as the *segfault* is in
+   this function, it is not in the call funtion. Therefore it is the affectaion
+   the error and either the array are not allocate or we go out of the limit of
+   our array.
+
+   When I reading the code I saw in the init function that malloc call was
+   commented. I decomment it and the error is corrected.
+
+** Program doesn't give back and abort sometimes 2
