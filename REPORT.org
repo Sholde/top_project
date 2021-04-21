@@ -1,0 +1,39 @@
+#+TITLE: Report of TOP Project
+#+AUTHOR: Bouton Nicolas
+#+DATE: April 2021
+
+* Debugging
+** Multiple definition
+
+   For beginnig the code have a link problem at the compile time because we
+   define 3 variables in *lbm_phys.h* and we redefine them in *lbm_phys.h*. Then
+   we have a multiple definition.
+
+   #+BEGIN_SRC shell
+[148] [sholde@ground simu_simple_LBM] (master) (6m32s) $ make
+mpicc -Wall -g -c -o main.o main.c
+mpicc -Wall -g -c -o lbm_phys.o lbm_phys.c
+mpicc -Wall -g -c -o lbm_init.o lbm_init.c
+mpicc -Wall -g -c -o lbm_struct.o lbm_struct.c
+mpicc -Wall -g -c -o lbm_comm.o lbm_comm.c
+mpicc -Wall -g -c -o lbm_config.o lbm_config.c
+mpicc -Wall -g -o lbm main.o lbm_phys.o lbm_init.o lbm_struct.o lbm_comm.o lbm_config.o -lm
+/usr/bin/ld : lbm_phys.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:9 : définitions multiples de « opposite_of »; main.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:9 : défini pour la première fois ici
+/usr/bin/ld : lbm_phys.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:10 : définitions multiples de « equil_weight »; main.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:10 : défini pour la première fois ici
+/usr/bin/ld : lbm_phys.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:11 : définitions multiples de « direction_matrix »; main.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:11 : défini pour la première fois ici
+/usr/bin/ld : lbm_init.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:9 : définitions multiples de « opposite_of »; main.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:9 : défini pour la première fois ici
+/usr/bin/ld : lbm_init.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:10 : définitions multiples de « equil_weight »; main.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:10 : défini pour la première fois ici
+/usr/bin/ld : lbm_init.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:11 : définitions multiples de « direction_matrix »; main.o:/home/sholde/dev/master/M1/S2/hm/top_project/simu_simple_LBM/lbm_phys.h:11 : défini pour la première fois ici
+collect2: erreur: ld a retourné le statut de sortie 1
+make: *** [Makefile:24 : lbm] Erreur 1
+   #+END_SRC
+
+   To fix the problem we just need to mark these variable extern in header file
+   to indicate they are define in another file.
+
+   #+BEGIN_SRC c
+/********************** CONSTS **********************/
+extern const int opposite_of[DIRECTIONS];
+extern const double equil_weight[DIRECTIONS];
+extern const Vector direction_matrix[DIRECTIONS];
+   #+END_SRC
