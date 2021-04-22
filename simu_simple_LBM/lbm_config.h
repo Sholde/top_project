@@ -34,26 +34,26 @@
 /********************  STRUCT  *********************/
 /**
  * Structure de configuration du problème à résoudre.
-**/
+ **/
 typedef struct lbm_config_s
 {
-	//discretisation
-	int iterations;
-	int width;
-	int height;
-	//obstacle
-	double obstacle_r;
-	double obstacle_x;
-	double obstacle_y;
-	//flow parameters
-	double inflow_max_velocity;
-	double reynolds;
-	//derived flow parameters
-	double kinetic_viscosity;
-	double relax_parameter;
-	//results
-	const char * output_filename;
-	int write_interval;
+  //discretisation
+  int iterations;
+  int width;
+  int height;
+  //obstacle
+  double obstacle_r;
+  double obstacle_x;
+  double obstacle_y;
+  //flow parameters
+  double inflow_max_velocity;
+  double reynolds;
+  //derived flow parameters
+  double kinetic_viscosity;
+  double relax_parameter;
+  //results
+  const char * output_filename;
+  int write_interval;
 } lbm_config_t;
 
 /*****************  FUNCTIONS  *******************/
@@ -67,7 +67,7 @@ void setup_default_values(void);
 /**
  * Configuration accessible sous le forme d'une variable globale.
  * A utiliser comme une constante à part pour le chargement initiale.
-**/
+ **/
 extern lbm_config_t lbm_gbl_config;
 
 #endif //LBM_CONFIG_H

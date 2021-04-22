@@ -14,58 +14,58 @@
 /**
  * Definition des différents type de cellule pour savoir quel traitement y appliquer
  * lors du calcul.
-**/
+ **/
 typedef enum lbm_corner_pos_e
-{
-	CORNER_TOP_LEFT = 0,
-	CORNER_TOP_RIGHT = 1,
-	CORNER_BOTTOM_LEFT = 2,
-	CORNER_BOTTOM_RIGHT = 3,
-} lbm_corner_pos_t;
+  {
+    CORNER_TOP_LEFT = 0,
+    CORNER_TOP_RIGHT = 1,
+    CORNER_BOTTOM_LEFT = 2,
+    CORNER_BOTTOM_RIGHT = 3,
+  } lbm_corner_pos_t;
 
 /*********************  ENUM  ***********************/
 typedef enum lbm_comm_type_e
-{
-	COMM_SEND,
-	COMM_RECV
-} lbm_comm_type_t;
+  {
+    COMM_SEND,
+    COMM_RECV
+  } lbm_comm_type_t;
 
 /********************  STRUCT  **********************/
 /**
  * Structure utilisée pour stoquer les informations relatives aux communications.
-**/
+ **/
 typedef struct lbm_comm_t_s
 {
-	/** Position de la maille locale dans le maillage global (origine). **/
-	int x;
-	int y;
-	/** Taille de la maille locale. **/
-	int width;
-	int height;
-	int nb_x;
-	int nb_y;
-	/** Id du voisin de droite, -1 si aucun. **/
-	int right_id;
-	/** Id du voisin de gauche, -1 si aucun. **/
-	int left_id;
-	int top_id;
-	int bottom_id;
-	int corner_id[4];
-	/** Requète asynchrone en cours. **/
-	MPI_Request requests[32];
-	lbm_mesh_cell_t buffer;
+  /** Position de la maille locale dans le maillage global (origine). **/
+  int x;
+  int y;
+  /** Taille de la maille locale. **/
+  int width;
+  int height;
+  int nb_x;
+  int nb_y;
+  /** Id du voisin de droite, -1 si aucun. **/
+  int right_id;
+  /** Id du voisin de gauche, -1 si aucun. **/
+  int left_id;
+  int top_id;
+  int bottom_id;
+  int corner_id[4];
+  /** Requète asynchrone en cours. **/
+  MPI_Request requests[32];
+  lbm_mesh_cell_t buffer;
 } lbm_comm_t;
 
 /*******************  FUNCTION  *********************/
 static inline int lbm_comm_width( lbm_comm_t *mc )
 {
-	return mc->width;
+  return mc->width;
 }
 
 /*******************  FUNCTION  *********************/
 static inline int lbm_comm_height( lbm_comm_t *mc )
 {
-	return mc->height;
+  return mc->height;
 }
 
 /*******************  FUNCTION  *********************/
