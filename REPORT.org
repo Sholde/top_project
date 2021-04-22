@@ -71,3 +71,20 @@ malloc: Permission denied
    #+BEGIN_SRC c
 mesh->cell = NULL;
    #+END_SRC
+** Run the program
+
+   Then I run the program with a reduce number of iteration (16) and without
+   *MPI*. The program finish without crashing.
+
+   I decide to run it with *MPI* but it doesn't give back again and doesn't
+   print on standart output anything. I decide to inspect the code and find an
+   error of communication maybe.
+
+   The problem is that on the *main* function, we autorize only the
+   *RANK_MASTER* process to execute the function *close_file*. But in this
+   function we have a *MPI* barrier with *MPI_COMM_WORLD* that wait all
+   process. And the problem is that others threads haven't a *MPI* barrier. Thus
+   the *RANK_MASTER* wait infinitely.
+
+   To patch this, I remove the line of *MPI* barrier in *close_file* function.
+
