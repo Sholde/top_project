@@ -56,3 +56,18 @@ extern const Vector direction_matrix[DIRECTIONS];
    commented. I decomment it and the error is corrected.
 
 ** Program doesn't give back and abort sometimes 2
+
+   I re-run *gdb* and it says me that I have a *segfault* when I call the
+   *libc*. It is true because an allocation via *malloc* failed (printed in
+   stdout).
+   
+   #+BEGIN_SRC shell
+malloc: Permission denied
+   #+END_SRC
+
+   The problem was that I don't realize we set address of the last problem to
+   *NULL* after we allocate it. I deleted the line.
+
+   #+BEGIN_SRC c
+mesh->cell = NULL;
+   #+END_SRC
