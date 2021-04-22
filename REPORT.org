@@ -88,3 +88,26 @@ mesh->cell = NULL;
 
    To patch this, I remove the line of *MPI* barrier in *close_file* function.
 
+** Valgrind
+
+   I decide to run *valgrind* now, but it seems to be normal. We haven't
+   *possbilby lost* or *suppressed* bytes. But we have *833 bytes definitely
+   lost*.
+
+   #+BEGIN_SRC json
+==29527== HEAP SUMMARY:
+==29527==     in use at exit: 83,271 bytes in 50 blocks
+==29527==   total heap usage: 21,807 allocs, 21,757 frees, 33,251,263 bytes allocated
+==29527== 
+==29527== LEAK SUMMARY:
+==29527==    definitely lost: 833 bytes in 12 blocks
+==29527==    indirectly lost: 599 bytes in 20 blocks
+==29527==      possibly lost: 0 bytes in 0 blocks
+==29527==    still reachable: 81,839 bytes in 18 blocks
+==29527==         suppressed: 0 bytes in 0 blocks
+   #+END_SRC
+
+   Therfore I will check the code to see where memory is not release. But
+   everything seems ok, I zap this part.
+
+* Optimization
