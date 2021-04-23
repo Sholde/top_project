@@ -1,4 +1,4 @@
-iterations           = 16
+iterations           = 10
 width                = 800
 height               = 160
 #obstacle_r           = 

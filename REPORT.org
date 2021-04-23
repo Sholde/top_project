@@ -148,5 +148,54 @@ gnuplot> splot "< ./display --gnuplot result.raw 4" u 1:2:4
     number of processus *MPI* from *512* to *4*. Because it was too long to
     test.
 
+    I am workeing on a personnal project of *MPI debugger* and for a number of
+    *4* process and the following configuration:
+
+    #+BEGIN_SRC shell
+=================== CONFIG ===================
+iterations           = 10
+width                = 800
+height               = 160
+obstacle_r           = 17.000000
+obstacle_x           = 161.000000
+obstacle_y           = 83.000000
+reynolds             = 100.000000
+reynolds             = 100.000000
+inflow_max_velocity  = 0.100000
+output_filename      = resultat.raw
+write_interval       = 50
+------------ Derived parameters --------------
+kinetic_viscosity    = 0.034000
+relax_parameter      = 1.661130
+==============================================
+    #+END_SRC
+
+    I obtain that:
+
+    #+BEGIN_SRC shell
+===============================================================================
+================================= MPI DEBUGGER ================================
+===============================================================================
+GLOBAL SUMMARY:
+        388317 message send
+        388317 message recv
+        436 barrier passed
+
+LOCAL SUMMARY (Process 0):
+        64719 message send
+        64722 message recv
+        109 barrier passed
+
+ERROR SUMMARY:
+        No error
+    #+END_SRC
+
+    For the moment, it is just an interposition library that interpose
+    *MPI_Send*, *MPI_Recv* and *MPI_Barrier*.
+
+    We can see that we have a lot of communication, and a lot of barrier. We can
+    see that also in the code bacause we loop on *MPI_Send*, *MPI_Recv* and
+    *MPI_Barrier* call.
+
 *** Scheme
    
