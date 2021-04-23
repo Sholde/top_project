@@ -110,4 +110,43 @@ mesh->cell = NULL;
    Therfore I will check the code to see where memory is not release. But
    everything seems ok, I zap this part.
 
-* Optimization
+* Original Code
+** Result
+
+   Fist of all, I want to execute the code and generate a *gif* to see if it
+   working. This is the last frame (frame 4 of 4):
+
+   #+CAPTION: Last frame of Origin Code
+   #+NAME: fig:last_frame_of_origin_code
+   #+ATTR_LATEX: :width 300px
+   [[./simu_simple_LBM/origin_code_last_frame.png]]
+
+   It is not like the image in the subject. So I will investigate the code and
+   see what is wrong. But for the moment I will zap this part.
+
+** GIF, Image and script
+
+   Also I have only *4* frame when I run your script. And an error occur:
+
+   #+BEGIN_SRC shell
+gnuplot> splot "< ./display --gnuplot result.raw 4" u 1:2:4
+                                                           ^
+         line 0: All points x value undefined
+   #+END_SRC
+
+   But the srcipt generate the *gif*
+
+** Checksum Script
+
+   I make a script which call *display* binary with the 2 file and the number of
+   frame in parameter to compare their checksum.
+
+** Communication
+*** Explaination
+
+    Fistr of all I reduce the number of iteration from *1600* to *16* and the
+    number of processus *MPI* from *512* to *4*. Because it was too long to
+    test.
+
+*** Scheme
+   
