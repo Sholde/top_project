@@ -164,6 +164,11 @@ int main(int argc, char * argv[])
   //barrier to wait all before start
   MPI_Barrier(MPI_COMM_WORLD);
 
+  //
+  double start, end;
+
+  start = MPI_Wtime();
+
   //time steps
   for ( i = 1 ; i < ITERATIONS ; i++ )
     {
@@ -195,6 +200,17 @@ int main(int argc, char * argv[])
         save_frame_all_domain(fp, &mesh, &temp_render );
     }
 
+  end = MPI_Wtime();
+
+  //
+  double elapsed = end - start;
+
+  //
+  if (rank == RANK_MASTER)
+    {
+      fprintf(stderr, "Elapsed time in second(s): %f\n", elapsed);
+    }
+  
   if( rank == RANK_MASTER && fp != NULL)
     {
       close_file(fp);

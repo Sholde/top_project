@@ -294,4 +294,74 @@ ERROR SUMMARY:
     [[./ressources/scheme_of_original_code.png]]
 ** Scalability of Original Code
 
-   I added few lines to compute the times of the code with *MPI_Wtime*.
+   I added few lines to compute the times of the code with *MPI_Wtime*. And I
+   print only the time of rank master. I choose to compute the time of the loop
+   in *main.c* because is here we work.
+
+   There are *2 ways* to determine the scability:
+   - *strong scaling:* when we increase the number of processus by *2*, we reduce
+     the time by *2*
+   - *weak scaling:* when we increase the quantity of data by *2* and the number of
+     processus by *2*, the time is the same
+
+*** Strong scaling
+
+    #+BEGIN_SRC sh
+# 1 process
+Elapsed time in second(s): 9.617342     
+
+# 2 process
+Elapsed time in second(s): 9.463310
+
+# 4 process
+Elapsed time in second(s): 9.271398
+    #+END_SRC
+
+    We can see when we increase the number of processus by *2*, we don't reduce
+    the time by *2*. So we don't scale.
+
+*** Weak scaling
+
+    To evaluate the *weak scaling* I decide to begin with default config:
+
+    #+BEGIN_SRC json
+iterations           = 10
+width                = 800
+height               = 160
+#obstacle_r           = 
+#obstacle_x           = 
+#obstacle_y           = 
+reynolds             = 100
+inflow_max_velocity  = 0.100000
+inflow_max_velocity  = 0.100000
+output_filename      = resultat.raw
+write_interval       = 50
+    #+END_SRC
+
+    And I will multiply the height by *2* when I increase the number of
+    processus by *2*, because if I do that I multiply the quantity of data by
+    *2*, if I multiply also the width by *2*, then I multiply the quantity of
+    data by *4* and it is not that we want.
+
+    So for *1 process* height equal *160*, for *2 process* height equal *320*
+    and for *4 process* height equal *740*.
+
+    #+BEGIN_SRC sh
+# 1 process
+Elapsed time in second(s): 9.764508
+
+# 2 process
+Elapsed time in second(s): 9.662370
+
+# 4 process
+Elapsed time in second(s): 9.840443
+    #+END_SRC
+
+    We scale because when we increase the number of processus by 2 and the
+    quantity of data by 2, we take the same time.
+* Optimization
+** Intraduction
+
+   I run the original code with the config file *original_config.txt* (with 160
+   iteration to have *4* frame and be able to compare the checksum when I will
+   optimize the code).
