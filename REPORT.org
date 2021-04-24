@@ -403,3 +403,87 @@ Elapsed time in second(s): 9.840443
 
     Therefore this optimization doesn't affect the code for the moment.
 
+** FLUSH
+*** Identification
+
+    When I remove *MPI_Barrier* in *lbm_comm.c*, I see that we have *flush*
+    function, which normally refer to *output*. But I didn't know this function,
+    so I run my alias *search* (it is just an alias of =grep -re word *=):
+
+    #+BEGIN_SRC c
+[148] [sholde@ground simu_simple_LBM] (master)* (13.3s) $ search FLUSH
+grep: display: binary file matches
+grep: lbm: binary file matches
+lbm_comm.c:  FLUSH_INOUT();
+lbm_config.h:#define __FLUSH_INOUT__ concat(s,l,e,e,p)(1)
+lbm_config.h:#define FLUSH_INOUT() __FLUSH_INOUT__
+    #+END_SRC
+
+    We can see that is in reality a macro which define a sleep ^^. (you are not
+    kind ^^)
+
+*** Justification
+
+    I think I don't need to justify that a sleep is very unless on a code. So
+    let's remove it. (I just remove the call).
+
+*** Evaluation
+    
+    The program take only *4.372996 seconds* now instead of *165*. The checksum
+    is the same.
+
+    Therefore it was *the main problem of the code*.
+
+    #+CAPTION: Without Sleep
+    #+NAME: fig:without_sleep
+    #+ATTR_LATEX: :width 300px
+    [[./simu_simple_LBM/without_sleep.png]]
+
+    We can now re-evaluate the scalability. I put bach the number of iteration
+    at *16000* now.
+
+**** Strong Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 94.997312
+
+# 2 process
+Elapsed time in second(s): 58.412028
+
+# 4 process
+Elapsed time in second(s): 48.756189
+     #+END_SRC
+
+     We don't reduce the time by *2* each step, but we have a speedup, so we can
+     say that we scale half ^^.
+
+     Maybe we need to remove *fprintf* in the next step because *io* is too long
+     compared to the compute.
+
+**** Weak Scaling
+
+     Like above, we multiply the height by *2* each time me increase the number
+     of processus by *2*.
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 94.997312
+
+# 2 process
+Elapsed time in second(s): 107.737355
+
+# 4 process
+Elapsed time in second(s): 134.550160
+     #+END_SRC
+
+     Here we can see that we don't have the same time. It is the reflect of
+     *strong scaling*.
+
+*** Conclusion
+
+    This optimization is good but we can still optimize the code to have a good
+    scaling.
+
+    I keep 160 iteration because originale code was run with that and we need
+    the same number of iteration to compare the checksum.

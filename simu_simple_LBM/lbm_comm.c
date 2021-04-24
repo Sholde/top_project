@@ -287,9 +287,6 @@ void lbm_comm_ghost_exchange(lbm_comm_t * mesh, Mesh *mesh_to_process )
   // Right to left phase : on reçoit à gauche et on envoie depuis la droite
   lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_SEND,mesh->left_id,1);
   lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_RECV,mesh->right_id,mesh->width - 1);
-        
-  //wait for IO to finish, VERY important, do not remove.
-  FLUSH_INOUT();
 }
 
 /*******************  FUNCTION  *********************/
