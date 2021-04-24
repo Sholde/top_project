@@ -2,11 +2,4 @@
 *.o
 lbm
 display
-
-# temporary
-*.pdf
-*.tex
-*.png
-*.gif
-*.txt
-*.raw
+libmprof.so

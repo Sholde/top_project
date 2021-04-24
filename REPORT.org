@@ -148,7 +148,7 @@ gnuplot> splot "< ./display --gnuplot result.raw 4" u 1:2:4
     number of processus *MPI* from *512* to *4*. Because it was too long to
     test.
 
-    I am workeing on a personnal project of *MPI debugger* and for a number of
+    I am workeing on a personnal project of *MPI profiler* and for a number of
     *4* process and the following configuration:
 
     #+BEGIN_SRC shell
@@ -174,7 +174,7 @@ relax_parameter      = 1.661130
 
     #+BEGIN_SRC shell
 ===============================================================================
-================================= MPI DEBUGGER ================================
+================================= MPI PROFILER ================================
 ===============================================================================
 GLOBAL SUMMARY:
         388317 message send
@@ -182,8 +182,23 @@ GLOBAL SUMMARY:
         436 barrier passed
 
 LOCAL SUMMARY (Process 0):
-        64719 message send
-        64722 message recv
+        64719 message send [ 1 ]
+        64722 message recv [ 1 2 3 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 1):
+        129439 message send [ 0 2 ]
+        129438 message recv [ 0 2 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 2):
+        129439 message send [ 0 1 3 ]
+        129438 message recv [ 1 3 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 3):
+        64720 message send [ 0 2 ]
+        64719 message recv [ 2 ]
         109 barrier passed
 
 ERROR SUMMARY:
@@ -197,5 +212,86 @@ ERROR SUMMARY:
     see that also in the code bacause we loop on *MPI_Send*, *MPI_Recv* and
     *MPI_Barrier* call.
 
+    For the communication, if we consider that all process send their info to
+    master process (process 0) for print information. We can see that the
+    communication for *4* MPI process are the following:
+
+    - each process communicate with his neighbors
+
+      
+    The code of my *MPI Profiler* will be added to my github this week. For the
+    moment we need to preload manually the library with *LD_PRELOAD*.
+
+    https://github.com/Sholde
+
+    Here with *8* processus to confirm the communication scheme:
+
+    #+BEGIN_SRC shell
+===============================================================================
+================================= MPI PROFILER ================================
+===============================================================================
+GLOBAL SUMMARY:
+        906073 message send
+        906073 message recv
+        872 barrier passed
+
+LOCAL SUMMARY (Process 0):
+        64719 message send [ 1 ]
+        64726 message recv [ 1 2 3 4 5 6 7 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 1):
+        129439 message send [ 0 2 ]
+        129438 message recv [ 0 2 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 2):
+        129439 message send [ 0 1 3 ]
+        129438 message recv [ 1 3 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 3):
+        129439 message send [ 0 2 4 ]
+        129438 message recv [ 2 4 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 4):
+        129439 message send [ 0 3 5 ]
+        129438 message recv [ 3 5 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 5):
+        129439 message send [ 0 4 6 ]
+        129438 message recv [ 4 6 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 6):
+        129439 message send [ 0 5 7 ]
+        129438 message recv [ 5 7 ]
+        109 barrier passed
+
+LOCAL SUMMARY (Process 7):
+        64720 message send [ 0 6 ]
+        64719 message recv [ 6 ]
+        109 barrier passed
+
+ERROR SUMMARY:
+        No error
+        #+END_SRC
+
+        So it is not the scheme describe in the subject were we have a cube, and
+        we can exchange in diagonally, and vertically. Here we exchange only
+        horizontally.
+
+        But on the code, we exchange vetically and diagonally, so I don't know
+        why we don't exchange. Maybe the initialisation was not correct.
+
 *** Scheme
    
+    #+CAPTION: Scheme of Original Code
+    #+NAME: fig:scheme_of_original_code
+    #+ATTR_LATEX: :width 300px
+    [[./ressources/scheme_of_original_code.png]]
+** Scalability of Original Code
+
+   I added few lines to compute the times of the code with *MPI_Wtime*.
