@@ -252,64 +252,37 @@ void lbm_comm_ghost_exchange(lbm_comm_t * mesh, Mesh *mesh_to_process )
   lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_SEND,mesh->right_id,mesh->width - 2);
   lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_RECV,mesh->left_id,0);
 
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
-        
   // Right to left phase : on reçoit à gauche et on envoie depuis la droite
   lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_SEND,mesh->left_id,1);
   lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_RECV,mesh->right_id,mesh->width - 1);
 
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
-        
   //top to bottom : on reçoit en bas et on envoie depuis le hauteur
   lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_SEND,mesh->bottom_id,mesh->height - 2);
   lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_RECV,mesh->top_id,0);
-
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
 
   // Right to left phase : on reçoit en haut et on envoie depuis le bas
   lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_SEND,mesh->top_id,1);
   lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_RECV,mesh->bottom_id,mesh->height - 1);
 
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
-
   //top left
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_TOP_LEFT],1,1);
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_BOTTOM_RIGHT],mesh->width - 1,mesh->height - 1);
 
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
-
   //bottom left
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_BOTTOM_LEFT],1,mesh->height - 2);
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_TOP_RIGHT],mesh->width - 1,0);
-
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
 
   //top right
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_TOP_RIGHT],mesh->width - 2,1);
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_BOTTOM_LEFT],0,mesh->height - 1);
 
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
-
   //bottom left
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_BOTTOM_LEFT],1,mesh->height - 2);
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_TOP_RIGHT],mesh->width - 1,0);
 
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
-
   //bottom right
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_BOTTOM_RIGHT],mesh->width - 2,mesh->height - 2);
   lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_TOP_LEFT],0,0);
-
-  //prevend comm mixing to avoid bugs
-  MPI_Barrier(MPI_COMM_WORLD);
 
   // Right to left phase : on reçoit à gauche et on envoie depuis la droite
   lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_SEND,mesh->left_id,1);

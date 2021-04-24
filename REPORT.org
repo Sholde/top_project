@@ -360,8 +360,46 @@ Elapsed time in second(s): 9.840443
     We scale because when we increase the number of processus by 2 and the
     quantity of data by 2, we take the same time.
 * Optimization
-** Intraduction
+** Introduction
 
    I run the original code with the config file *original_config.txt* (with 160
    iteration to have *4* frame and be able to compare the checksum when I will
-   optimize the code).
+   optimize the code). The result is on *original_code.raw*.
+
+   And I run with *4* process *MPI* (because I have only *4* process and *512*
+   is not accept by *MPI* when I *oversubscribe*).
+
+   The time for original code is: *165.417102 seconds*.
+
+** Barrier MPI
+*** Identification
+
+    Like you can see above in the report, my *MPI profile* detect a lot of
+    *barrier*.
+
+*** Justification
+
+    But in another course, we said us that *MPI_Barrier* are useless
+    because we are on a distributed memory (not shared). But only for print we
+    can keep them, for keep an readable output.
+
+    I don't need other justification to delete all of them (almost).
+
+*** Evaluation
+
+    I run the code with the same config but the time stay the same, it is *165*
+    seconds (~2 min 45).
+
+    I check the checksum with my script and it is the same so it don't change
+    the behaviour.
+    
+    #+CAPTION: Without MPI Barrier
+    #+NAME: fig:without_barrier
+    #+ATTR_LATEX: :width 300px
+    [[./simu_simple_LBM/without_barrier.png]]
+
+    I decide to not evaluate the scability because it is not barrier that cause
+    the *slow-down*. (normally it is the main problem but not here)
+
+    Therefore this optimization doesn't affect the code for the moment.
+

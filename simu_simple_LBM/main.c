@@ -179,21 +179,12 @@ int main(int argc, char * argv[])
       //compute special actions (border, obstacle...)
       special_cells( &mesh, &mesh_type, &mesh_comm);
 
-      //need to wait all before doing next step
-      MPI_Barrier(MPI_COMM_WORLD);
-
       //compute collision term
       collision( &temp, &mesh);
-
-      //need to wait all before doing next step
-      MPI_Barrier(MPI_COMM_WORLD);
 
       //propagate values from node to neighboors
       lbm_comm_ghost_exchange( &mesh_comm, &temp );
       propagation( &mesh, &temp);
-
-      //need to wait all before doing next step
-      MPI_Barrier(MPI_COMM_WORLD);
 
       //save step
       if ( i % WRITE_STEP_INTERVAL == 0 && lbm_gbl_config.output_filename != NULL )
