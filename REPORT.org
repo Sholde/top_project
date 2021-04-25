@@ -1015,3 +1015,11 @@ Elapsed time in second(s): 2.724929
    - taskset out processus or threads on available core
    - check all step of optimization if we have the same behaviour than original
      code
+* Conclusion
+
+  You will see all my result in the directory *result*. I also provide my
+  *cpuinfo*.
+
+* Reference
+
+  https://github.com/Sholde/mprof
