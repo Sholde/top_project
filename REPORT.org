@@ -662,3 +662,11 @@ Elapsed time in second(s): 13.787685
     #+NAME: fig:without_diag_and_horiz
     #+ATTR_LATEX: :width 300px
     [[./simu_simple_LBM/without_diag_and_horiz.png]]
+* Observation and Important Rules
+** First touch
+
+   First touch is important, because it is at this moment we *allocate* the
+   memory (not with malloc that prepare the first touch). We do that in
+   *lbm_init.c* when we affect value of our array.
+
+   But here in the code, we have the fisrt touch. So it is good.
