@@ -119,7 +119,7 @@ mesh->cell = NULL;
    #+CAPTION: Last frame of Origin Code
    #+NAME: fig:last_frame_of_origin_code
    #+ATTR_LATEX: :width 300px
-   [[./simu_simple_LBM/origin_code_last_frame.png]]
+   [[./ressources/origin_code_last_frame.png]]
 
    It is not like the image in the subject. So I will investigate the code and
    see what is wrong. But for the moment I will zap this part.
@@ -222,7 +222,7 @@ ERROR SUMMARY:
     The code of my *MPI Profiler* will be added to my github this week. For the
     moment we need to preload manually the library with *LD_PRELOAD*.
 
-    https://github.com/Sholde
+    https://github.com/Sholde/mprof
 
     Here with *8* processus to confirm the communication scheme:
 
@@ -430,7 +430,7 @@ Elapsed time in second(s): 9.840443
     #+CAPTION: Without MPI Barrier
     #+NAME: fig:without_barrier
     #+ATTR_LATEX: :width 300px
-    [[./simu_simple_LBM/without_barrier.png]]
+    [[./ressources/without_barrier.png]]
 
     I decide to not evaluate the scability because it is not barrier that cause
     the *slow-down*. (normally it is the main problem but not here)
@@ -471,7 +471,7 @@ lbm_config.h:#define FLUSH_INOUT() __FLUSH_INOUT__
     #+CAPTION: Without Sleep
     #+NAME: fig:without_sleep
     #+ATTR_LATEX: :width 300px
-    [[./simu_simple_LBM/without_sleep.png]]
+    [[./ressources/without_sleep.png]]
 
     We can now re-evaluate the scalability. I put bach the number of iteration
     at *16000* now.
@@ -665,7 +665,8 @@ Elapsed time in second(s): 13.787685
     #+CAPTION: Without Diagonal and Horizontal Communication
     #+NAME: fig:without_diag_and_horiz
     #+ATTR_LATEX: :width 300px
-    [[./simu_simple_LBM/without_diag_and_horiz.png]]
+    [[./ressources/without_diag_and_horiz.png]]
+
 ** Factorize Communication
 *** Identification
 
