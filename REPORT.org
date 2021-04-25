@@ -281,9 +281,9 @@ ERROR SUMMARY:
 
         So it is not the scheme describe in the subject were we have a cube, and
         we can exchange in diagonally, and vertically. Here we exchange only
-        horizontally.
+        vertically.
 
-        But on the code, we exchange vetically and diagonally, so I don't know
+        But on the code, we exchange horizontally and diagonally, so I don't know
         why we don't exchange. Maybe the initialisation was not correct.
 
 *** Scheme
@@ -292,6 +292,36 @@ ERROR SUMMARY:
     #+NAME: fig:scheme_of_original_code
     #+ATTR_LATEX: :width 300px
     [[./ressources/scheme_of_original_code.png]]
+
+*** Problem
+
+    With this type of communication, we cut the array vertically, and as we see
+    in course, the cache line of processor is not optimized. Because cut the
+    adjoin of array.
+
+    #+CAPTION: Problem of Original Code
+    #+NAME: fig:problem_of_original_code
+    #+ATTR_LATEX: :width 300px
+    [[./ressources/problem_of_original_code.png]]
+
+    There are 2 problem with this scheme, first we can see that we need 3
+    communication to get values and they cab be in 3 different cache
+    line. Normally in the code we get one by one all the element of column, so
+    we make *height* communication for one phase.
+
+    But we can optimize that with this scheme, we have normally all tha array in
+    the cache line of the processor and it is a reduce number of
+    cacheline. Also, me need only 2 communication because array is contigous.
+    
+    #+CAPTION: Solution of Original Code
+    #+NAME: fig:solution_of_original_code
+    #+ATTR_LATEX: :width 300px
+    [[./ressources/solution_of_original_code.png]]
+
+    And I think that we can reduce enormous the number of communication with
+    this scheme. As you will see below with my tool, we have a lot of
+    communication.
+
 ** Scalability of Original Code
 
    I added few lines to compute the times of the code with *MPI_Wtime*. And I
@@ -485,5 +515,150 @@ Elapsed time in second(s): 134.550160
     This optimization is good but we can still optimize the code to have a good
     scaling.
 
-    I keep 160 iteration because originale code was run with that and we need
+    I keep 160 iteration because original code was run with that and we need
     the same number of iteration to compare the checksum.
+
+** Useless Communication
+*** Identification
+
+   With my *profiler tool*, I ensure that diagonal and horizontal communication
+   don't work and don't affect the code because we have the same number of communication.
+
+   I also relevate that we do *2* horizaontal communication of right to left
+   phase. 
+
+**** With diagonal and horizontal
+
+     #+BEGIN_SRC json
+===============================================================================
+================================= MPI PROFILER ================================
+===============================================================================
+==mprof== GLOBAL SUMMARY:
+==mprof==          message sent: 6,860,226 - waiting 4.824620 sec in total
+==mprof==          message recv: 6,860,226 - waiting 5.032828 sec in total
+==mprof==     barrier(s) passed: 1 - waiting 0.021257 sec in total
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 0):
+==mprof==          message sent: 1,143,369 - waiting 1.270680 sec (max: 0.017854 sec)
+==mprof==          message recv: 1,143,381 - waiting 1.163514 sec (max: 0.028485 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.000002 sec (max: 0.000002 sec)
+==mprof==       list(s) sent to: 1
+==mprof==     list(s) recv from: 1 2 3
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 1):
+==mprof==          message sent: 2,286,742 - waiting 1.365050 sec (max: 0.029143 sec)
+==mprof==          message recv: 2,286,738 - waiting 0.980989 sec (max: 0.008989 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.010554 sec (max: 0.010554 sec)
+==mprof==       list(s) sent to: 0 2
+==mprof==     list(s) recv from: 0 2
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 2):
+==mprof==          message sent: 2,286,742 - waiting 1.431860 sec (max: 0.023733 sec)
+==mprof==          message recv: 2,286,738 - waiting 1.097262 sec (max: 0.018549 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.007246 sec (max: 0.007246 sec)
+==mprof==       list(s) sent to: 0 1 3
+==mprof==     list(s) recv from: 1 3
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 3):
+==mprof==          message sent: 1,143,373 - waiting 0.757031 sec (max: 0.021758 sec)
+==mprof==          message recv: 1,143,369 - waiting 1.791063 sec (max: 0.041184 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.003454 sec (max: 0.003454 sec)
+==mprof==       list(s) sent to: 0 2
+==mprof==     list(s) recv from: 2
+==mprof== 
+==mprof== ERROR SUMMARY:
+==mprof==          No errors
+     #+END_SRC
+
+**** Without diagonal and horizontal
+
+     #+BEGIN_SRC json
+===============================================================================
+================================= MPI PROFILER ================================
+===============================================================================
+==mprof== GLOBAL SUMMARY:
+==mprof==          message sent: 6,860,226 - waiting 5.298880 sec in total
+==mprof==          message recv: 6,860,226 - waiting 4.093540 sec in total
+==mprof==     barrier(s) passed: 1 - waiting 0.022888 sec in total
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 0):
+==mprof==          message sent: 1,143,369 - waiting 1.292504 sec (max: 0.014903 sec)
+==mprof==          message recv: 1,143,381 - waiting 1.126989 sec (max: 0.023139 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.000003 sec (max: 0.000003 sec)
+==mprof==       list(s) sent to: 1
+==mprof==     list(s) recv from: 1 2 3
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 1):
+==mprof==          message sent: 2,286,742 - waiting 1.210447 sec (max: 0.008922 sec)
+==mprof==          message recv: 2,286,738 - waiting 1.211880 sec (max: 0.014947 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.011559 sec (max: 0.011559 sec)
+==mprof==       list(s) sent to: 0 2
+==mprof==     list(s) recv from: 0 2
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 2):
+==mprof==          message sent: 2,286,742 - waiting 1.690453 sec (max: 0.017929 sec)
+==mprof==          message recv: 2,286,738 - waiting 0.758160 sec (max: 0.004870 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.007670 sec (max: 0.007670 sec)
+==mprof==       list(s) sent to: 0 1 3
+==mprof==     list(s) recv from: 1 3
+==mprof== 
+==mprof== LOCAL SUMMARY (Process 3):
+==mprof==          message sent: 1,143,373 - waiting 1.105475 sec (max: 0.017646 sec)
+==mprof==          message recv: 1,143,369 - waiting 0.996512 sec (max: 0.019579 sec)
+==mprof==     barrier(s) passed: 1 - waiting 0.003657 sec (max: 0.003657 sec)
+==mprof==       list(s) sent to: 0 2
+==mprof==     list(s) recv from: 2
+==mprof== 
+==mprof== ERROR SUMMARY:
+==mprof==          No errors
+     #+END_SRC
+
+*** Justification
+
+    I don't know if it is normal but they don't impact code. So I comment
+    diagonal and horizontal communication because it is useless for the original
+    code.
+
+    For the duplicate communication, I removed the second because it is useless.
+
+*** Evaluation
+
+    I put back the number of iteration to *160* because *1600* was too long even
+    if last optimization.
+
+**** Strong Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 9.484721
+
+# 2 process
+Elapsed time in second(s): 5.716905
+
+# 4 process
+Elapsed time in second(s): 4.816284
+     #+END_SRC
+
+**** Strong Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 9.484721
+
+# 2 process
+Elapsed time in second(s): 10.496072
+
+# 4 process
+Elapsed time in second(s): 13.787685
+     #+END_SRC
+
+*** Conclusion
+
+    It is relatively the same result that last optimization. So this
+    optimization has not effect. I am not surprised because we do not the
+    communication (I see that with my tool).
+
+    #+CAPTION: Without Diagonal and Horizontal Communication
+    #+NAME: fig:without_diag_and_horiz
+    #+ATTR_LATEX: :width 300px
+    [[./simu_simple_LBM/without_diag_and_horiz.png]]
