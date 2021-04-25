@@ -883,6 +883,54 @@ Elapsed time in second(s): 3.814287
 
     It is a big optimization. Don't forget compiler optimization flags.
 
+** Remove printf in loop
+*** Identification
+
+    We have a printf in main loop that print *each step*.
+
+*** Justification
+
+    We can remove it because it just jor debugging but we already debug.
+
+    At the end of loop we have a write in the file but we keep it because we
+    want the result ^^.
+
+*** Evaluation
+
+    Always with *160* iteration.
+
+**** Strong Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 1.749387
+
+# 2 processes
+Elapsed time in second(s): 1.020297
+
+# 4 processes
+Elapsed time in second(s): 0.720448
+     #+END_SRC
+
+     We reduce a little bit the time.
+
+**** Weak Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 1.749387
+
+# 2 processes
+Elapsed time in second(s): 2.016925
+
+# 4 processes
+Elapsed time in second(s): 2.717607
+     #+END_SRC
+
+     We scale better than the last optimization but it is not already very good.
+     We take 1 more second when we increase the number of processus by *4* and the
+     quantity of data by *4*.
+
 * Observation and Important Rules
 ** First touch
 
