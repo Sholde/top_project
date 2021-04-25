@@ -216,7 +216,7 @@ void lbm_comm_sync_ghosts_vertical( lbm_comm_t * mesh, Mesh *mesh_to_process, lb
 {
   //vars
   MPI_Status status;
-  int x, k;
+  int x;
 
   //if target is -1, no comm
   if (target_rank == -1)
@@ -226,13 +226,11 @@ void lbm_comm_sync_ghosts_vertical( lbm_comm_t * mesh, Mesh *mesh_to_process, lb
     {
     case COMM_SEND:
       for ( x = 1 ; x < mesh_to_process->width - 2 ; x++)
-        for ( k = 0 ; k < DIRECTIONS ; k++)
-          MPI_Send( &Mesh_get_cell(mesh_to_process, x, y)[k], 1, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
+        MPI_Send( &Mesh_get_cell(mesh_to_process, x, y)[0], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
       break;
     case COMM_RECV:
       for ( x = 1 ; x < mesh_to_process->width - 2 ; x++)
-        for ( k = 0 ; k < DIRECTIONS ; k++)
-          MPI_Recv( &Mesh_get_cell(mesh_to_process, x, y)[k], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
+        MPI_Recv( &Mesh_get_cell(mesh_to_process, x, y)[0], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
       break;
     default:
       fatal("Unknown type of communication.");
