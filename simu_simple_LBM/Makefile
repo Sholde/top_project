@@ -5,8 +5,9 @@ RM=rm -f
 MAKEDEPEND=makedepend
 
 #flags
-CFLAGS=-Wall -g3
-LDFLAGS=-lm -pg
+CFLAGS=-Wall
+OFLAGS=-Ofast -march=native -funroll-loops -finline-functions
+LDFLAGS=-lm
 
 #Files
 LBM_SOURCES=main.c lbm_phys.c lbm_init.c lbm_struct.c lbm_comm.c lbm_config.c
@@ -18,10 +19,10 @@ TARGET=lbm display
 all: $(TARGET)
 
 %.o: %.c
-	$(MPICC) $(CFLAGS) -c -o $@ $<
+	$(MPICC) $(CFLAGS) $(OFLAGS) -c -o $@ $<
 
 lbm: $(LBM_OBJECTS)
-	$(MPICC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(MPICC) $(CFLAGS) $(OFLAGS) -o $@ $^ $(LDFLAGS)
 
 display: display.c
 	$(CC) $(CFLAGS) -o $@ display.c

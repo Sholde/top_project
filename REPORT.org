@@ -344,10 +344,10 @@ ERROR SUMMARY:
 # 1 process
 Elapsed time in second(s): 9.617342     
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 9.463310
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 9.271398
     #+END_SRC
 
@@ -377,17 +377,17 @@ write_interval       = 50
     *2*, if I multiply also the width by *2*, then I multiply the quantity of
     data by *4* and it is not that we want.
 
-    So for *1 process* height equal *160*, for *2 process* height equal *320*
-    and for *4 process* height equal *740*.
+    So for *1 process* height equal *160*, for *2 processes* height equal *320*
+    and for *4 processes* height equal *740*.
 
     #+BEGIN_SRC sh
 # 1 process
 Elapsed time in second(s): 9.764508
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 9.662370
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 9.840443
     #+END_SRC
 
@@ -482,10 +482,10 @@ lbm_config.h:#define FLUSH_INOUT() __FLUSH_INOUT__
 # 1 process
 Elapsed time in second(s): 94.997312
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 58.412028
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 48.756189
      #+END_SRC
 
@@ -504,10 +504,10 @@ Elapsed time in second(s): 48.756189
 # 1 process
 Elapsed time in second(s): 94.997312
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 107.737355
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 134.550160
      #+END_SRC
 
@@ -636,10 +636,10 @@ Elapsed time in second(s): 134.550160
 # 1 process
 Elapsed time in second(s): 9.484721
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 5.716905
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 4.816284
      #+END_SRC
 
@@ -649,10 +649,10 @@ Elapsed time in second(s): 4.816284
 # 1 process
 Elapsed time in second(s): 9.484721
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 10.496072
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 13.787685
      #+END_SRC
 
@@ -754,10 +754,10 @@ Elapsed time in second(s): 13.787685
 # 1 process
 Elapsed time in second(s): 9.082287
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 4.815402
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 3.135502
      #+END_SRC
 
@@ -770,10 +770,10 @@ Elapsed time in second(s): 3.135502
 # 1 process
 Elapsed time in second(s): 9.082287
 
-# 2 process
+# 2 processes
 Elapsed time in second(s): 9.703516
 
-# 4 process
+# 4 processes
 Elapsed time in second(s): 12.141861
      #+END_SRC
 
@@ -824,6 +824,64 @@ Each sample counts as 0.01 seconds.
 
    The good way is to re-decompose each array of each *MPI process* on all
    thread.
+
+** Compilation Optimization
+*** Identification
+
+    Everybody know that compiler allow us to optimize ower code with flags.
+
+*** Justification
+
+    I decide to use these flags:
+
+    #+BEGIN_SRC makefile
+OFLAGS=-Ofast -march=native -funroll-loops -finline-functions
+    #+END_SRC
+
+    - ~-Ofast~ for all basic optimization that bring compiler
+    - ~-march=native~ to enable vectorization depending on our system (SSE, AVX
+      and AVX512 if it is supported)
+    - ~-funroll-loops~ for unroll loops and use vectorization
+    - ~-finline-functions~ bring by default with ~-Ofast~ but I really want that
+      compiler inline function (because function call have a big impact)
+
+*** Evaluation
+
+    Always with *160* iteration and checksum passed.
+
+**** Strong Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 1.628340
+
+# 2 processes
+Elapsed time in second(s): 1.106629
+
+# 4 processes
+Elapsed time in second(s): 0.945746
+     #+END_SRC
+
+     We are faster that the last optimization. But we don't very scale.
+
+**** Weak Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 1.628340
+
+# 2 processes
+Elapsed time in second(s): 2.141724
+
+# 4 processes
+Elapsed time in second(s): 3.814287
+     #+END_SRC
+
+     We litterraly don't scale.
+
+*** Conclusion
+
+    It is a big optimization. Don't forget compiler optimization flags.
 
 * Observation and Important Rules
 ** First touch
