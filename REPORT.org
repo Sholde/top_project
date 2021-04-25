@@ -787,6 +787,44 @@ Elapsed time in second(s): 12.141861
     This optimization work, mostly for *strong scaling* and I think it can we
     increase if we factorize even more.
 
+** gprof
+*** Identification
+
+   It is time to use *gprof*. I add *-pg* in Makefile and after running it,
+   gprof give me:
+
+   #+BEGIN_SRC json
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+ 19.94      0.49     0.49                             propagation
+ 18.31      0.94     0.45                             compute_equilibrium_profile
+ 16.68      1.35     0.41                             get_vect_norme_2
+ 15.46      1.73     0.38                             compute_cell_collision
+ 13.83      2.07     0.34                             get_cell_velocity
+  6.92      2.24     0.17                             get_cell_density
+  5.90      2.39     0.15                             Mesh_get_cell
+  1.22      2.42     0.03                             special_cells
+  1.02      2.44     0.03                             lbm_cell_type_t_get_cell
+  0.81      2.46     0.02                             main
+   #+END_SRC
+
+   We can see that we have *5* functions that take all of out appliction
+   time. Therefore if we want to optimize the code, we must optimize this
+   function, maybe by adding parallelization with OpenMP but we must to be able
+   to parallelize these function in totality or almost, esle we will take the
+   *Ahmdal's law*.
+
+   But I don't have time to do that because for a good hybrid implementation of
+   MPI/OpenMP we neeed to change all the structure. If we keep this structure we
+   will adding *omp pragma* on each function but we will *create* and *destroy*
+   thread each time for each call for each loop. And it is not worse I think.
+
+   The good way is to re-decompose each array of each *MPI process* on all
+   thread.
+
 * Observation and Important Rules
 ** First touch
 
