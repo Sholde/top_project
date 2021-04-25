@@ -935,7 +935,7 @@ Elapsed time in second(s): 2.717607
 *** Identification
 
     No identification.
-
+    
 *** Justification
 
     Taskset a processus can be usefull to avoid that OS change our processus of
@@ -991,3 +991,26 @@ Elapsed time in second(s): 2.724929
    *lbm_init.c* when we affect value of our array.
 
    But here in the code, we have the fisrt touch. So it is good.
+
+** Others
+
+   There are several rules to respect for developping a parallel application to
+   increase is scalability:
+
+   - execute the code a first time to see what is going on
+   - debug the program with different tools (gdb, valgring, ...)
+   - read the code to find if calls are good (i.e. FLUSH_INOUT)
+   - evaluate the scalability of original code and compare it each stop of
+     optimization
+   - parallelize the code with thread (pthread, openMP) or processus (MPI) or
+     both (hybrid MPI/openMP)
+   - reduce the number of communication (by sending array for MPI)
+   - try to respect memory locality, that is the data msut be in the core that
+     compute with
+   - use cahe line of processor, with boucle index (in C we iterate by line) and
+     with MPI call (using array of contigous memory)
+   - remove unnecessary output (printf to debug)
+   - adding compilation optimiazation flags
+   - taskset out processus or threads on available core
+   - check all step of optimization if we have the same behaviour than original
+     code
