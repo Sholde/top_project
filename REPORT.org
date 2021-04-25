@@ -490,7 +490,7 @@ Elapsed time in second(s): 48.756189
      #+END_SRC
 
      We don't reduce the time by *2* each step, but we have a speedup, so we can
-     say that we scale half ^^.
+     say that we scale half.
 
      Maybe we need to remove *fprintf* in the next step because *io* is too long
      compared to the compute.
@@ -893,7 +893,7 @@ Elapsed time in second(s): 3.814287
     We can remove it because it just jor debugging but we already debug.
 
     At the end of loop we have a write in the file but we keep it because we
-    want the result ^^.
+    want the result.
 
 *** Evaluation
 
@@ -930,6 +930,58 @@ Elapsed time in second(s): 2.717607
      We scale better than the last optimization but it is not already very good.
      We take 1 more second when we increase the number of processus by *4* and the
      quantity of data by *4*.
+
+** taskset when running
+*** Identification
+
+    No identification.
+
+*** Justification
+
+    Taskset a processus can be usefull to avoid that OS change our processus of
+    core. Of course, if a processus change of core in running we lose
+    performance.
+
+    REMINDER: ~taskset -c 0,1,2,3 mpirun -np 4 ./lbm~
+
+*** Evaluation
+
+    Always with *160* iteration.
+
+**** Strong Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 1.759057
+
+# 2 processes
+Elapsed time in second(s): 1.009991
+
+# 4 processes
+Elapsed time in second(s): 0.705297
+     #+END_SRC
+
+     We reduce a very little bit the time.
+
+**** Weak Scaling
+
+     #+BEGIN_SRC shell
+# 1 process
+Elapsed time in second(s): 1.759057
+
+# 2 processes
+Elapsed time in second(s): 2.007785
+
+# 4 processes
+Elapsed time in second(s): 2.724929
+     #+END_SRC
+
+     As last optimizatin.
+
+*** Conclusion
+
+    Taskset our processus don't really affect the time. I think if we
+    increase the number of iteration, we will see a little difference.
 
 * Observation and Important Rules
 ** First touch
